@@ -37,18 +37,18 @@ alert("USE A TECLA ESPACO PARA FLUTUAR")
 			return ctx;
 		 }
 	}
-	//					|cor		   |x                	|y   			|largura		 |altura	    |raio   |velocidade	 |velocidadeX  |velocidadeY  |placar
-	let quadra = new obj("DeepSkyBlue", 0, 					 0,   			 canvas.width, 	  canvas.height, null, 	 null, 		  null,			null, 		  null);
+	//		    |cor	   |x                	|y   		  |largura	|altura	 	|raio   |velocidade    |velocidadeX  	velocidadeY  |placar
+	let quadra = new obj("DeepSkyBlue", 0, 			 0,   		   canvas.width, canvas.height,  null, 	 null, 		null,	  	null, 	      null);
 
-	let torre  = new obj("white", 		quadra.largura,  	 0, 			 100, 			  100, 			 null, 	 -1, 		  null,			null, 		  null);
-	let torre1 = new obj(torre.cor, 	quadra.largura,      200, 	 		 100, 			  600, 			 null, 	 -1, 		  null,			null, 		  null);
-	let torre2 = new obj(torre.cor, 	quadra.largura+300,  0,  			 100, 			  250, 			 null, 	 -1, 		  null,			null, 		  null);
-	let torre3 = new obj(torre.cor, 	quadra.largura+300,  350,  			 100, 			  600, 			 null, 	 -1, 		  null,			null, 		  null);
-	let torre4 = new obj(torre.cor, 	quadra.largura+600,  0, 			 100, 			  400, 			 null, 	 -1, 		  null,			null, 		  null);
-	let torre5 = new obj(torre.cor, 	quadra.largura+600,  500, 	 		 100, 			  600, 			 null, 	 -1, 		  null,			null, 		  null);
-
-	let p1 	   = new obj("yellow", 		quadra.largura/2, 	 quadra.altura-20, null, 		  null, 		 20, 	 5,   		  5,   			null, 		  0);
-	let p1Placar = new obj("blue", 		quadra.largura/4, 	 quadra.altura/4, null, 		  null, 		 null, 	 null, 		  null,  		null, 		  p1.placar);
+	let torre  = new obj("white", 	    quadra.largura,      0, 		   100, 	 100, 		 null, 	 -1, 	  	null,	  	null, 	      null);
+	let torre1 = new obj(torre.cor,     quadra.largura,      200, 	 	   100, 	 600, 		 null, 	 -1, 	  	null,	  	null, 	      null);
+	let torre2 = new obj(torre.cor,     quadra.largura+300,  0,  		   100, 	 250, 		 null, 	 -1, 	  	null,	  	null, 	      null);
+	let torre3 = new obj(torre.cor,     quadra.largura+300,  350,  		   100, 	 600, 		 null, 	 -1, 	  	null,	  	null, 	      null);
+	let torre4 = new obj(torre.cor,     quadra.largura+600,  0, 		   100, 	 400, 		 null, 	 -1, 	  	null,	  	null, 	      null);
+	let torre5 = new obj(torre.cor,     quadra.largura+600,  500, 	 	   100, 	 600, 		 null, 	 -1, 	  	null,	  	null,         null);
+	
+	let p1 	   = new obj("yellow", 	    quadra.largura/2, 	 quadra.altura-20, null, 	 null, 		 20, 	 5,   	  	5,   	  	null, 	      0);
+	let p1Placar = new obj("blue", 	    quadra.largura/4, 	 quadra.altura/4,  null, 	 null, 		 null, 	 null, 	  	null,     	null, 	      p1.placar);
 
 //_3.3_///////////////////////////// movimento p1
 	let setaCima = false;
