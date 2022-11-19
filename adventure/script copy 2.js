@@ -11,14 +11,6 @@ let compra = 0;
 let troca = 0;
 let vidas = 0;
 
-alert(	"Bem vindo ao ADVENTURE!!!"+"\n\n"+
-		"Neste jogo, Voce é um aventureiro"+"\n"+
-		"E terá que passar por varios lugares perigosos"+"\n"+
-		"Coletando itens valiosos"+"\n"+
-		"Esquivando-se das armadilhas"+"\n"+
-		"Entre pro nosso ranking de melhores jogadores"+"\n\n"+
-		"USE as SETAS + ESPACO para pular")
-
 // conexao localstorage
 if(localStorage.hasOwnProperty('bdAdv')){
 	tabela = JSON.parse(window.localStorage.getItem('bdAdv'));
@@ -33,6 +25,7 @@ if(localStorage.hasOwnProperty('bdAdv')){
 	]
 window.localStorage.setItem('bdAdv', JSON.stringify(tabela));
 }
+
 //_4_/////////////////////////////// objetos
 	class obj {
 		constructor(cor, x, y, larg, alt, raio, vel, nome, res, placar, vida){
@@ -94,39 +87,66 @@ window.localStorage.setItem('bdAdv', JSON.stringify(tabela));
 	let tela = new obj("#FFFFCC",		0, 			 	0,		canvas.width, canvas.height, null,   null, 	null, 				null,  			null,		null);
 	let porta = new obj("black",   		tela.larg+5000,	0,			100,		100, 		 null, 	 velo,   null, 				null,			null,		null);
 
-	let torre = [];
-	for(i=0;i<=torres;i++){
-		torre[i]  = new obj("#FFCC00", 	tela.larg,  	 0,			200,		50, 		 null, 	 velo,   null, 				null,			null,		null);
-	}
+
 	let argola = [];
 	for(i=0;i<=argolas;i++){
 		argola[i]  = new obj("yellow", 	tela.larg,		 0,			null,		null, 		 30, 	 velo,   null, 				null, 			null);
+	}
+	let torre = [];
+	for(i=0;i<=torres;i++){
+		torre[i]  = new obj("#FFCC00", 	tela.larg,  	 0,			200,		50, 		 null, 	 velo,   null, 				null,			null,		null);
 	}
 	let cp = [];
 	for(i=0;i<=cps;i++){
 		cp[i]  = new obj("#FFCC00", 	tela.larg,  	 0,			100,		100, 		 null, 	 velo,   null, 				null, 		null,			null);
 	}
 
-	let p1 	   = new obj("purple", 	    tela.larg/2, 	tela.alt-20,null,		null, 		 30, 	 velo,    null, 			null,  			0,			3);
-	let tiro   = new obj("pink", 	    tela.larg/2, 	tela.alt-20,null,		null, 		 10, 	 velo,    null, 			null,  			0,			null);
+	let p1 	   = new obj("#000000", 	tela.larg/2, 	tela.alt-20,null,		null, 		 30, 	 velo,    null, 			null,  			0,			3);
+	let tiro   = new obj("#000000",	    tela.larg/2, 	tela.alt-20,null,		null, 		 10, 	 velo,    null, 			null,  			0,			null);
 
 	let p1Placar = new obj("#6B4226", 	tela.larg/8, 	tela.alt/8, null,		null,  		null,	 null,  tabela[0].nome,	 tabela[0].placar, 	p1.placar,	null);
 
-	function comprar(compra, troca){
-		compra = prompt("Cuidado com as armadilhas!!!"+"\n\n"+
-		'deseja comprar mais vidas?'+"\n"+
-		'digite' +"\n"+
-		'1 para SIM' +"\n"+
-		'2 para NAO');
-		if(compra == 1){
-			troca = prompt(	"Cada vida custa 100 pontos"+"\n"+
-							"Digite quantas vidas quer comprar"
-						  );
-			vidas = p1Placar.placar/(troca*100);
-			p1.vida += vidas;
-			p1Placar.placar -= (troca*100);
+	//_3.2_///////////////////////////// movimento p1
+	let setaFrente = false;
+	let setaTras = false;
+	let espaco = false;
+	let disparo = false;
+
+	window.addEventListener('keydown', teclaOn);
+	function teclaOn(e) {
+		if (e.keyCode == 32){ //backspace
+			espaco = true;
+		} else if (e.keyCode == 37){ //setaTras
+			setaTras = true;
+		} else if (e.keyCode == 39){ //setaFrente
+			setaFrente = true;
+		} else if (e.keyCode == 67){ // letra c do teclado
+			disparo = true;
 		}
 	}
+	window.addEventListener('keyup', teclaOff);
+	function teclaOff(e) {
+		if (e.keyCode == 32){ //backspace
+			espaco = false;
+		} else if (e.keyCode == 37){ //setaTras
+			setaTras = false;
+		} else if (e.keyCode == 39){ //setaFrente
+			setaFrente = false;
+		} else if (e.keyCode == 67){ // letra c do teclado
+			disparo = false;
+		}
+	}
+
+	//_3.1_///////////////////////////// roteiro do game
+	alert(	"Bem vindo ao ADVENTURE!!!"+"\n\n"+
+			"Neste jogo, Voce é um aventureiro"+"\n"+
+			"E terá que passar por varios lugares perigosos"+"\n"+
+			"Coletando itens valiosos"+"\n"+
+			"Esquivando-se das armadilhas"+"\n"+
+			"Entre pro nosso ranking de melhores jogadores"+"\n\n"+
+			"USE as SETAS + ESPACO para pular")
+
+
 	function clear(){
 		p1.x = tela.larg/2;
 		p1.y = tela.alt-20;
@@ -135,20 +155,45 @@ window.localStorage.setItem('bdAdv', JSON.stringify(tabela));
 		setaTras = false;
 		disparo = false;
 	}
+	function reset() {
+		//window.location.reload()
+		clear();		
+		p1.vida = 3;
+		p1Placar.placar = 0;	
+	}
+	function comprar(compra, troca){
+		compra = prompt("Cuidado com as armadilhas!!!"+"\n\n"+
+						'deseja comprar mais vidas?'+"\n"+
+						'digite' +"\n"+
+						'1 para SIM');
+		if(compra == 1){
+			troca = prompt(	"Cada vida custa 100 pontos"+"\n"+
+							"Digite quantas vidas quer comprar"
+						  );			
+				if((troca*100)<p1Placar.placar){
+				p1Placar.placar -= (troca*100);
+				p1.vida += parseInt(troca);	
+			} else {
+				alert("Voce nao tem pontos suficientes!!!");
+			}
+		}
+	}
+
+
 	function fase1(){		
 	// cenario
 		tela.nome="DESERTO";
 		tela.cor="#FFFFCC"; 
 		p1Placar.cor="#6B4226";
-		porta.x=tela.larg+ 	5000;	
+		porta.x=tela.larg+ 	5500;	
 		
 		torre[0].x=tela.larg;		torre[0].y=	400; torre[0].alt=200; torre[0].larg=400; torre[0].cor="#FFCC00";
 		torre[1].x=tela.larg+ 200;	torre[1].y=	200; torre[1].alt=200; torre[1].larg=400; torre[1].cor="#FFCC00";	
 		torre[2].x=tela.larg+ 750; 	torre[2].y=	100; torre[2].alt=400; torre[2].larg=200; torre[2].cor="#FFCC00";
 
-		cp[0].x=tela.larg+ 100; 	cp[0].y=500;	cp[0].y=200; cp[0].larg=100;	cp[0].cor="#FFCC00";
-		cp[1].x=tela.larg+ 500;		cp[1].y=400;	cp[1].y=200; cp[1].larg=100;	cp[1].cor="#FFCC00";
-		cp[2].x=tela.larg+ 800; 	cp[2].y=400;	cp[2].y=200; cp[2].larg=100;	cp[2].cor="#FFCC00";
+		cp[0].x=tela.larg+ 100; 	cp[0].y=600;	cp[0].alt=100;	cp[0].y=200; cp[0].larg=100;	cp[0].cor="#FFCC00";
+		cp[1].x=tela.larg+ 500;		cp[1].y=400;	cp[1].alt=300;	cp[1].y=200; cp[1].larg=100;	cp[1].cor="#FFCC00";
+		cp[2].x=tela.larg+ 750; 	cp[2].y=400;	cp[2].alt=200;	cp[2].y=200; cp[2].larg=200;	cp[2].cor="#FFCC00";
 		
 		argola[0].x=tela.larg+ 100;	argola[0].y=300;
 		argola[1].x=tela.larg+ 500;	argola[1].y=450;
@@ -156,25 +201,24 @@ window.localStorage.setItem('bdAdv', JSON.stringify(tabela));
 
 		//clear();
 	}
-	function fase2(callback){
+	function fase2(){
 		tela.nome="FLORESTA";
 		tela.cor = "#009900";
 		p1Placar.cor = "white";
 		porta.x=tela.larg+ 	5000;	
 
-		torre[0].x=tela.larg;			torre[0].y=	100; torre[0].alt=400; torre[0].larg=100; torre[0].cor="#003300";
-		torre[1].x=tela.larg+ 	200;	torre[1].y=	400; torre[1].alt=100; torre[1].larg=600; torre[1].cor="#003300";
-		torre[2].x=tela.larg+ 	600; 	torre[2].y=	200; torre[2].alt=400; torre[2].larg=100; torre[2].cor="#003300";
+		torre[0].x=tela.larg;			torre[0].y=	100; torre[0].alt=400; torre[0].larg=100; torre[0].cor="#6B4226";
+		torre[1].x=tela.larg+ 	200;	torre[1].y=	400; torre[1].alt=100; torre[1].larg=600; torre[1].cor="#6B4226";
+		torre[2].x=tela.larg+ 	600; 	torre[2].y=	200; torre[2].alt=400; torre[2].larg=100; torre[2].cor="#6B4226";
 
-		cp[0].x=tela.larg;				cp[0].y=200; cp[0].cor="#003300";
-		cp[1].x=tela.larg+ 		600;	cp[1].y=400; cp[1].cor="#003300";
-		cp[2].x=tela.larg+ 		1000; 	cp[2].y=400; cp[2].cor="#003300";
+		cp[0].x=tela.larg;				cp[0].y=200; 	cp[0].alt=400; cp[0].cor="#003300";
+		cp[1].x=tela.larg+ 		600;	cp[1].y=400; 	cp[1].alt=400; cp[1].cor="#003300";
+		cp[2].x=tela.larg+ 		1000; 	cp[2].y=400; 	cp[2].alt=400; cp[2].cor="#003300";
 
 		argola[0].x=tela.larg+ 	50;		argola[0].y=50;
 		argola[1].x=tela.larg+ 	400;	argola[1].y=350;
 		argola[2].x=tela.larg+ 	650;	argola[2].y=150;
-				
-		comprar(callback)
+
 		clear();
 	}	
 	function fase3(){
@@ -215,60 +259,40 @@ window.localStorage.setItem('bdAdv', JSON.stringify(tabela));
 		argola[1].x=tela.larg+ 600;	argola[1].y=50;
 		argola[2].x=tela.larg+ 900;	argola[2].y=550;
 
-		//clear();
+		clear();
 		alert("fase final!!!");
 	}
-	fase1();
-	function trocaFase(){
+	fase3();
+
+
+	function trocaFase(callback){
 		if(tela.cor == "#FFFFCC"){
+			comprar(callback)
 			fase2();
 		} else if(tela.cor == "#009900"){
+			comprar(callback)
 			fase3();
 		} else if(tela.cor == "#999900"){
+			comprar(callback)
 			faseF();			
 		} else if(tela.cor == "#8FBC8F"){
 			alert('Parabens'+"\n"+'Voce venceu o desafio final!!!');
 			ranking();
 			reset();
+			fase1();
 		}
 	}
-
-//_3.2_///////////////////////////// movimento p1
-	let setaFrente = false;
-	let setaTras = false;
-	let espaco = false;
-	let disparo = false;
-
-	window.addEventListener('keydown', teclaOn);
-	function teclaOn(e) {
-		if (e.keyCode == 32){ //backspace
-			espaco = true;
-		} else if (e.keyCode == 37){ //setaTras
-			setaTras = true;
-		} else if (e.keyCode == 39){ //setaFrente
-			setaFrente = true;
-		} else if (e.keyCode == 67){ // letra c do teclado
-			disparo = true;
+	function mesmaFase(){
+		if(tela.cor == "#FFFFCC"){
+			fase1();
+		} else if(tela.cor == "#009900"){
+			fase2();
+		} else if(tela.cor == "#999900"){
+			fase3();			
+		} else if(tela.cor == "#8FBC8F"){
+			faseF();
 		}
 	}
-	window.addEventListener('keyup', teclaOff);
-	function teclaOff(e) {
-		if (e.keyCode == 32){ //backspace
-			espaco = false;
-		} else if (e.keyCode == 37){ //setaTras
-			setaTras = false;
-		} else if (e.keyCode == 39){ //setaFrente
-			setaFrente = false;
-		} else if (e.keyCode == 67){ // letra c do teclado
-			disparo = false;
-		}
-	}
-//_3.1_////////////////////////////// recomeco
-	function reset() {
-		//window.location.reload()
-		clear();		
-		fase1();		
-	 }
 
 //_3_///////////////////////////// ranking
 	 function lista(){
@@ -388,13 +412,14 @@ window.localStorage.setItem('bdAdv', JSON.stringify(tabela));
 				colisao = false;
 				p1.vida -= 1;
 				alert("kabum!!!");	
-				reset();			
+				mesmaFase()
+				//reset();			
 			}
 			if (p1.vida == 0){
 				alert("Voce perdeu!!!");
 				ranking();
 				reset();
-				p1.vida = 3;
+				fase1();
 			}
 			if (cp[i].colisao(tiro)) {
 				colisao = false;
@@ -422,18 +447,15 @@ window.localStorage.setItem('bdAdv', JSON.stringify(tabela));
 //_2.1_///////////////////////////// desenha
 	function desenha() {
 		tela.retangulo();
-
-
-		for(i in torre){
-			torre[i].retangulo();
-		}
 		for(i in argola){
 			argola[i].circulo();
+		}
+		for(i in torre){
+			torre[i].retangulo();
 		}
 		for(i in cp){
 			cp[i].retangulo();
 		}
-
 		p1.circulo();
 		tiro.circulo();
 		p1Placar.text();

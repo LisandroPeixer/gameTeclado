@@ -7,6 +7,9 @@ let torres = 2;
 let argolas = 2;
 let cps = 2;
 let velo = -5;
+let compra = 0;
+let troca = 0;
+let vidas = 0;
 
 // conexao localstorage
 if(localStorage.hasOwnProperty('bdAdv')){
@@ -23,11 +26,9 @@ if(localStorage.hasOwnProperty('bdAdv')){
 window.localStorage.setItem('bdAdv', JSON.stringify(tabela));
 }
 
-alert("USE A TECLA ESPACO PARA FLUTUAR")
-
 //_4_/////////////////////////////// objetos
 	class obj {
-		constructor(cor, x, y, larg, alt, raio, vel, nome, res, placar){
+		constructor(cor, x, y, larg, alt, raio, vel, nome, res, placar, vida){
 			this.cor = cor;
 			this.x = x;
 			this.y = y;
@@ -38,6 +39,7 @@ alert("USE A TECLA ESPACO PARA FLUTUAR")
 			this.nome = nome;
 			this.res = res;
 			this.placar = placar;
+			this.vida = vida
 		}
 		retangulo(){
 			ctx.fillStyle = this.cor;
@@ -54,9 +56,11 @@ alert("USE A TECLA ESPACO PARA FLUTUAR")
 		text(){                         // função para desenhar placar
 			ctx.fillStyle = this.cor;
 			ctx.font = '35px sans-serif';
-			ctx.fillText(this.nome, this.x+100, this.y);
-			ctx.fillText(this.res, this.x, this.y);
-			ctx.fillText(this.placar, this.x, this.y+50);
+			ctx.fillText(p1.vida,	 	this.x,		this.y);
+			ctx.fillText(tela.nome, 	this.x+100,	this.y);
+			ctx.fillText(this.nome, 	this.x+100, this.y+50);
+			ctx.fillText(this.res, 		this.x, 	this.y+50);
+			ctx.fillText(this.placar, 	this.x, 	this.y+100);
 			return ctx;
 		 }
 		 colisao(colide){
@@ -70,56 +74,39 @@ alert("USE A TECLA ESPACO PARA FLUTUAR")
 			this.fundo = this.y + this.alt;
 			this.esq = this.x;
 
-			  	if(	this.topo < colide.fundo &&
-					this.dir > colide.esq &&
-					this.fundo > colide.topo &&
-					this.esq < colide.dir){
-						colisao = true;
-					}
-					return colisao
+			if(	this.topo < colide.fundo &&
+				this.dir > colide.esq &&
+				this.fundo > colide.topo &&
+				this.esq < colide.dir){
+					colisao = true;
+				}
+				return colisao
 		 }
 	}
-	//		    		|cor			|x           	|y			|larg		|alt	 	|raio   |vel   	|nome 				|res   			|placar
-	let tela = new obj("DeepSkyBlue",	0, 			 	0,		canvas.width, canvas.height, null,   null, 	null, 				null,  			null);
-	let porta = new obj("brown",   		tela.larg,		0,			200,		200, 		 null, 	 velo,   null, 				null,			null);
+	//		    		|cor			|x           	|y			|larg		|alt	 	|raio   |vel   	|nome 				|res   			|placar		|vida
+	let tela = new obj("#FFFFCC",		0, 			 	0,		canvas.width, canvas.height, null,   null, 	null, 				null,  			null,		null);
+	let porta = new obj("black",   		tela.larg+5000,	0,			100,		100, 		 null, 	 velo,   null, 				null,			null,		null);
 
-	let torre = [];
-	for(i=0;i<=torres;i++){
-		torre[i]  = new obj("green", 	tela.larg,  	 0,			200,		50, 		 null, 	 velo,   null, 				null,			null);
-	}
+
 	let argola = [];
 	for(i=0;i<=argolas;i++){
 		argola[i]  = new obj("yellow", 	tela.larg,		 0,			null,		null, 		 30, 	 velo,   null, 				null, 			null);
 	}
+	let torre = [];
+	for(i=0;i<=torres;i++){
+		torre[i]  = new obj("#FFCC00", 	tela.larg,  	 0,			200,		50, 		 null, 	 velo,   null, 				null,			null,		null);
+	}
 	let cp = [];
 	for(i=0;i<=cps;i++){
-		cp[i]  = new obj("red", 		tela.larg,  	 0,			100,		100, 		 null, 	 velo,   null, 				null, 			null);
+		cp[i]  = new obj("#FFCC00", 	tela.larg,  	 0,			100,		100, 		 null, 	 velo,   null, 				null, 		null,			null);
 	}
 
-	let p1 	   = new obj("purple", 	    tela.larg/2, 	tela.alt-20,null,		null, 		 30, 	 velo,    null, 			null,  			0);
-	let tiro   = new obj("pink", 	    tela.larg/2, 	tela.alt-20,null,		null, 		 10, 	 velo,    null, 			null,  			0);
+	let p1 	   = new obj("#000000", 	tela.larg/2, 	tela.alt-20,null,		null, 		 30, 	 velo,    null, 			null,  			0,			3);
+	let tiro   = new obj("#000000",	    tela.larg/2, 	tela.alt-20,null,		null, 		 10, 	 velo,    null, 			null,  			0,			null);
 
-	let p1Placar = new obj("blue", 	    tela.larg/8, 	tela.alt/8, null,		null,  		null,	 null,  tabela[0].nome,	 tabela[0].placar, 	p1.placar);
+	let p1Placar = new obj("#6B4226", 	tela.larg/8, 	tela.alt/8, null,		null,  		null,	 null,  tabela[0].nome,	 tabela[0].placar, 	p1.placar,	null);
 
-	// cenario
-	function cenario(){
-		porta.x=tela.larg+ 	5000;	porta.y=	400;
-
-		torre[0].x=tela.larg;		torre[0].y=	150;
-		torre[1].x=tela.larg+ 400;	torre[1].y=	400;
-		torre[2].x=tela.larg+ 800; 	torre[2].y=	300;
-
-		argola[0].x=tela.larg+ 100;	argola[0].y=100;
-		argola[1].x=tela.larg+ 500;	argola[1].y=350;
-		argola[2].x=tela.larg+ 900;	argola[2].y=250;
-
-		cp[0].x=tela.larg+ 200; 	cp[0].y=200;
-		cp[1].x=tela.larg+ 600;		cp[1].y=400;
-		cp[2].x=tela.larg+ 1000; 	cp[2].y=400;
-	}
-	cenario();
-
-//_3.2_///////////////////////////// movimento p1
+	//_3.2_///////////////////////////// movimento p1
 	let setaFrente = false;
 	let setaTras = false;
 	let espaco = false;
@@ -149,18 +136,164 @@ alert("USE A TECLA ESPACO PARA FLUTUAR")
 			disparo = false;
 		}
 	}
-//_3.1_////////////////////////////// recomeco
-	function reset() {
-		//window.location.reload()
+
+	//_3.1_///////////////////////////// roteiro do game
+	alert(	"Bem vindo ao ADVENTURE!!!"+"\n\n"+
+			"Neste jogo, Voce é um aventureiro"+"\n"+
+			"E terá que passar por varios lugares perigosos"+"\n"+
+			"Coletando itens valiosos"+"\n"+
+			"Esquivando-se das armadilhas"+"\n"+
+			"Entre pro nosso ranking de melhores jogadores"+"\n\n"+
+			"USE as SETAS + ESPACO para pular + C para soco")
+
+
+	function clear(){
 		p1.x = tela.larg/2;
 		p1.y = tela.alt-20;
-		p1Placar.placar = 0;
-		cenario();
 		espaco = false;
 		setaFrente = false;
 		setaTras = false;
 		disparo = false;
-	 }
+	}
+	function reset() {
+		//window.location.reload()
+		clear();		
+		p1.vida = 3;
+		p1Placar.placar = 0;	
+	}
+	function comprar(compra, troca){
+		compra = prompt("Cuidado com as armadilhas!!!"+"\n\n"+
+						'deseja comprar mais vidas?'+"\n"+
+						'digite' +"\n"+
+						'1 para SIM');
+		if(compra == 1){
+			troca = prompt(	"Cada vida custa 100 pontos"+"\n"+
+							"Digite quantas vidas quer comprar"
+						  );			
+				if((troca*100)<p1Placar.placar){
+				p1Placar.placar -= (troca*100);
+				p1.vida += parseInt(troca);	
+			} else {
+				alert("Voce nao tem pontos suficientes!!!");
+			}
+		}
+	}
+
+
+	function fase1(){		
+	// cenario
+		tela.nome="DESERTO";
+		tela.cor="#FFFFCC"; 
+		p1Placar.cor="#6B4226";
+		porta.x=tela.larg+ 	5500;	
+		
+		torre[0].x=tela.larg;		torre[0].y=	400; torre[0].alt=200; torre[0].larg=400; torre[0].cor="#FFCC00";
+		torre[1].x=tela.larg+ 200;	torre[1].y=	200; torre[1].alt=200; torre[1].larg=400; torre[1].cor="#FFCC00";	
+		torre[2].x=tela.larg+ 750; 	torre[2].y=	100; torre[2].alt=400; torre[2].larg=200; torre[2].cor="#FFCC00";
+
+		cp[0].x=tela.larg+ 100; 	cp[0].y=600;	cp[0].alt=100;	cp[0].y=200; cp[0].larg=100;	cp[0].cor="#FFCC00";
+		cp[1].x=tela.larg+ 500;		cp[1].y=400;	cp[1].alt=300;	cp[1].y=200; cp[1].larg=100;	cp[1].cor="#FFCC00";
+		cp[2].x=tela.larg+ 750; 	cp[2].y=400;	cp[2].alt=200;	cp[2].y=200; cp[2].larg=200;	cp[2].cor="#FFCC00";
+		
+		argola[0].x=tela.larg+ 100;	argola[0].y=300;
+		argola[1].x=tela.larg+ 500;	argola[1].y=450;
+		argola[2].x=tela.larg+ 900;	argola[2].y=50;
+
+		//clear();
+	}
+	function fase2(){
+		tela.nome="FLORESTA";
+		tela.cor = "#009900";
+		p1Placar.cor = "white";
+		porta.x=tela.larg+ 	5000;	
+
+		torre[0].x=tela.larg;			torre[0].y=	100; torre[0].alt=400; torre[0].larg=100; torre[0].cor="#6B4226";
+		torre[1].x=tela.larg+ 	200;	torre[1].y=	400; torre[1].alt=100; torre[1].larg=600; torre[1].cor="#6B4226";
+		torre[2].x=tela.larg+ 	600; 	torre[2].y=	200; torre[2].alt=400; torre[2].larg=100; torre[2].cor="#6B4226";
+
+		cp[0].x=tela.larg;				cp[0].y=200; 	cp[0].alt=400; cp[0].cor="#003300";
+		cp[1].x=tela.larg+ 		600;	cp[1].y=400; 	cp[1].alt=400; cp[1].cor="#003300";
+		cp[2].x=tela.larg+ 		1000; 	cp[2].y=400; 	cp[2].alt=400; cp[2].cor="#003300";
+
+		argola[0].x=tela.larg+ 	50;		argola[0].y=50;
+		argola[1].x=tela.larg+ 	400;	argola[1].y=350;
+		argola[2].x=tela.larg+ 	650;	argola[2].y=150;
+
+		clear();
+	}	
+	function fase3(){
+		tela.nome="LABIRINTO";
+		tela.cor = "#999900";
+		p1Placar.cor = "white";
+		porta.x=tela.larg+ 	5200;	
+
+		torre[0].x=tela.larg;		torre[0].y=	100; torre[0].alt=400; torre[0].larg=200;
+		torre[1].x=tela.larg+ 400;	torre[1].y=	200; torre[1].alt=400; torre[1].larg=200;
+		torre[2].x=tela.larg+ 800; 	torre[2].y=	0;	 torre[2].alt=500; torre[2].larg=200;
+
+		cp[0].x=tela.larg; 		 	cp[0].y=200; cp[0].larg=200;
+		cp[1].x=tela.larg+ 400;		cp[1].y=200; cp[1].larg=200;
+		cp[2].x=tela.larg+ 800; 	cp[2].y=200; cp[2].larg=200;
+
+		argola[0].x=tela.larg+ 100;	argola[0].y=50;
+		argola[1].x=tela.larg+ 300;	argola[1].y=450;
+		argola[2].x=tela.larg+ 500;	argola[2].y=150;
+
+		clear();
+	}
+	function faseF(){
+		tela.nome="CASTELO";
+		tela.cor = "#8FBC8F";
+		p1Placar.cor = "white";
+		porta.x=tela.larg+ 	5200;	
+
+		torre[0].x=tela.larg;		torre[0].y=	0;	 torre[0].alt=500; torre[0].cor="#426F42";
+		torre[1].x=tela.larg+ 300;	torre[1].y=	100; torre[1].alt=400; torre[1].cor="#426F42"; torre[1].larg=300;
+		torre[2].x=tela.larg+ 800; 	torre[2].y=	0;	 torre[2].alt=500; torre[2].cor="#426F42";
+
+		cp[0].x=tela.larg; 		 	cp[0].y=200; cp[0].larg=200;		cp[0].cor="#426F42";
+		cp[1].x=tela.larg+ 300;		cp[1].y=400; cp[1].larg=200;		cp[1].cor="#426F42"; 	cp[1].larg=300;
+		cp[2].x=tela.larg+ 800; 	cp[2].y=400; cp[2].larg=200;		cp[2].cor="#426F42";
+
+		argola[0].x=tela.larg+ 300;	argola[0].y=50;
+		argola[1].x=tela.larg+ 600;	argola[1].y=50;
+		argola[2].x=tela.larg+ 900;	argola[2].y=550;
+
+		clear();
+		alert("fase final!!!");
+	}
+	fase1();
+
+
+	function trocaFase(callback){
+		if(tela.cor == "#FFFFCC"){
+			comprar(callback)
+			fase2();
+		} else if(tela.cor == "#009900"){
+			comprar(callback)
+			fase3();
+		} else if(tela.cor == "#999900"){
+			comprar(callback)
+			faseF();			
+		} else if(tela.cor == "#8FBC8F"){
+			alert('Parabens'+"\n"+'Voce venceu o desafio final!!!');
+			ranking();
+			reset();
+			fase1();
+		}
+	}
+	function mesmaFase(){
+		if(tela.cor == "#FFFFCC"){
+			fase1();
+		} else if(tela.cor == "#009900"){
+			fase2();
+		} else if(tela.cor == "#999900"){
+			fase3();			
+		} else if(tela.cor == "#8FBC8F"){
+			faseF();
+		}
+	}
+
 //_3_///////////////////////////// ranking
 	 function lista(){
 		alert(	tabela[0].placar+' | '+tabela[0].nome+"\n"+
@@ -247,6 +380,9 @@ alert("USE A TECLA ESPACO PARA FLUTUAR")
 		tiro.x = p1.x;
 	}
 	//progressao do cenario
+	if (porta.x + porta.larg == 0){
+		porta.x = tela.larg + 5000;
+	};
 	for(i in torre){
 		if (torre[i].x + torre[i].larg == 0){
 			torre[i].x = tela.larg;
@@ -274,15 +410,23 @@ alert("USE A TECLA ESPACO PARA FLUTUAR")
 		for(i in cp){
 			if (cp[i].colisao(p1)) {
 				colisao = false;
-				alert("voce perdeu!!!");
+				p1.vida -= 1;
+				alert("kabum!!!");	
+				mesmaFase()
+				//reset();			
+			}
+			if (p1.vida == 0){
+				alert("Voce perdeu!!!");
 				ranking();
 				reset();
+				fase1();
 			}
 			if (cp[i].colisao(tiro)) {
 				colisao = false;
 				cp[i].x = 3*tela.larg/2;
 				p1Placar.placar += 10;
 			}
+		
 		}
  	 // pontuacao atualiza
 		for(i in argola){
@@ -292,28 +436,26 @@ alert("USE A TECLA ESPACO PARA FLUTUAR")
 				argola[i].x = tela.larg;
 			}
 		}
-	//fim de fase	
+	//troca de fases	
 		if(porta.colisao(p1)){
-			alert('Parabens'+"\n"+'Voce venceu esta fase!!!');
-			reset();
+			alert('Parabens'+"\n"+'Voce passou esta fase!!!');
+			trocaFase();
+			}
 		}
-	}
+	
 	
 //_2.1_///////////////////////////// desenha
 	function desenha() {
 		tela.retangulo();
-
-
-		for(i in torre){
-			torre[i].retangulo();
-		}
 		for(i in argola){
 			argola[i].circulo();
+		}
+		for(i in torre){
+			torre[i].retangulo();
 		}
 		for(i in cp){
 			cp[i].retangulo();
 		}
-
 		p1.circulo();
 		tiro.circulo();
 		p1Placar.text();
