@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Tutorial Animação Sprite</title>
+	</head>
+	<body>
+		<canvas id='canvas'></canvas>
+		
+	<script>
+<!--tela-->
+	var canvas = document.getElementById('canvas');
+	canvas.width = 650;
+	canvas.height = 350;
+	var ctx = canvas.getContext("2d");
+
+<!--p1-->
+	var x=0;
+	var y=200;	
+	var setaFrente = false;
+	var setaTras = false;
+	var speed = 1;
+
+	window.addEventListener('keydown', teclaOn);
+	function teclaOn(e) {    
+		if (e.keyCode == 39){
+			setaFrente = true; 
+		} else if (e.keyCode == 37){
+			setaTras = true;      
+		}
+	} 
+	window.addEventListener('keyup', teclaOff);
+	function teclaOff(e) {    
+		if (e.keyCode == 39){
+			setaFrente = false; 
+		} else if (e.keyCode == 37){
+			setaTras = false;      
+		}
+	}	
+
+	
+<!--imagem-->
+	var character = new Image();
+	character.src = "character1.png";
+
+<!--sprite-->
+	var spriteWidth = 924;
+	var spriteHeight = 280;
+	var rows = 2;
+	var cols = 6;
+	var trackRight = 0;
+	var trackLeft = 1;
+	var width = spriteWidth/cols;
+	var height = spriteHeight/rows;
+	var curFrame = 0;
+	var frameCount = 6;
+	var srcX;
+	var srcY;
+		
+	function atualiza(){
+	
+		curFrame = ++curFrame % frameCount; 
+		srcX = curFrame * width;
+
+		ctx.clearRect(x,y,width,height);
+
+		if(!setaFrente && !setaTras){			
+			srcY = trackRight * height;
+						
+		}
+		if(setaFrente){
+			srcY = trackRight * height;
+			x+=speed;
+			
+		}
+		if(setaTras){
+			srcY = trackLeft * height;
+			x-=speed;
+			
+		}
+		
+		
+	}
+
+	function desenha(){		
+		ctx.drawImage(character,srcX,srcY,width,height,x,y,width,height);
+	}
+
+
+	function loop(){
+		atualiza();
+		desenha();
+	}
+	
+
+	setInterval(loop,100);
+	
+	</script>
+
+	</body>
+</html>
