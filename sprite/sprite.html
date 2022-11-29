@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Tutorial Animação Sprite</title>
+		<title>Tutorial Sprite</title>
 	</head>
 	<body>
-		<canvas id='canvas'></canvas>
-		
+		<canvas id='canvas'></canvas>		
 	<script>
-<!--tela-->
+//tela
 	var canvas = document.getElementById('canvas');
 	canvas.width = 650;
 	canvas.height = 350;
 	var ctx = canvas.getContext("2d");
 
-<!--p1-->
-	var x=0;
-	var y=200;	
+//teclado
 	var setaFrente = false;
 	var setaTras = false;
-	var speed = 1;
-
+	
 	window.addEventListener('keydown', teclaOn);
 	function teclaOn(e) {    
 		if (e.keyCode == 39){
@@ -37,61 +33,72 @@
 		}
 	}	
 
-	
-<!--imagem-->
-	var character = new Image();
-	character.src = "character1.png";
+//p1
+class obj{
+	constructor(cor, x, y, larg, alt, raio, vel, nome, res, placar){
+			this.cor = cor;
+			this.x = x;
+			this.y = y;
+			this.larg = larg;
+			this.alt = alt;
+			this.raio = raio;
+			this.vel = vel;
+			this.nome = nome;
+			this.res = res;	
+			this.placar = placar;
+		}
+		sprite(imagem) {
+		imagem.frameA = ++imagem.frameA % imagem.frameT; 
+		imagem.srcX = imagem.frameA * this.larg;
 
-<!--sprite-->
-	var spriteWidth = 924;
-	var spriteHeight = 280;
-	var rows = 2;
-	var cols = 6;
-	var trackRight = 0;
-	var trackLeft = 1;
-	var width = spriteWidth/cols;
-	var height = spriteHeight/rows;
-	var curFrame = 0;
-	var frameCount = 6;
-	var srcX;
-	var srcY;
+		ctx.clearRect(this.x,this.y,this.larg,this.alt);
+
+		if(!setaFrente && !setaTras){			
+			imagem.srcY = imagem.praDir * this.alt;						
+		}
+		if(setaFrente){
+			imagem.srcY = imagem.praDir * this.alt;
+			this.x+=this.vel;			
+		}
+		if(setaTras){
+			imagem.srcY = imagem.praEsq * this.alt;
+			this.x-=this.vel;			
+		}		
+		ctx.drawImage(imagem,imagem.srcX,imagem.srcY,imagem.larg,imagem.alt,
+							 this.x, 	 this.y, 	 this.larg,  this.alt 	 );
+		return ctx					
+	}
+}
+
+//imagem
+var ken = new Image();
+	ken.src = "character1.png";	
+	ken.larg = 924/6;	// total/frame
+	ken.alt = 280/2;
+	ken.praDir = 0;
+	ken.praEsq = 1;
+	ken.frameA = 0;
+	ken.frameT = 6;		
+	ken.srcX;
+	ken.srcY;	
+
+//			  	  |cor		|x	|y		|larg		|alt		|raio   |vel	|nome	|res	|placar
+
+let p1 	= new obj("yellow",	0,	200,	ken.larg,	ken.alt,	20, 	 10, 	 null,	null,	null);
+	
+
 		
 	function atualiza(){
 	
-		curFrame = ++curFrame % frameCount; 
-		srcX = curFrame * width;
-
-		ctx.clearRect(x,y,width,height);
-
-		if(!setaFrente && !setaTras){			
-			srcY = trackRight * height;
-						
-		}
-		if(setaFrente){
-			srcY = trackRight * height;
-			x+=speed;
-			
-		}
-		if(setaTras){
-			srcY = trackLeft * height;
-			x-=speed;
-			
-		}
-		
-		
 	}
 
 	function desenha(){		
-		ctx.drawImage(character,srcX,srcY,width,height,x,y,width,height);
+		p1.sprite(ken)
 	}
-
-
 	function loop(){
 		atualiza();
 		desenha();
 	}
-	
-
 	setInterval(loop,100);
 	
 	</script>
