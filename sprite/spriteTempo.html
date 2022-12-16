@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Tutorial Sprite</title>
+	</head>
+	<body>
+		<canvas id='canvas'></canvas>
+		
+	<script>
+//tela
+	var canvas = document.getElementById('canvas');
+	canvas.width = 650;
+	canvas.height = 350;
+	var ctx = canvas.getContext("2d");
+
+//teclado	
+	var setaFrente = false;
+	var setaTras = false;
+	window.addEventListener('keydown', teclaOn);
+	function teclaOn(e) {    
+		if (e.keyCode == 39){
+			setaFrente = true; 
+		} else if (e.keyCode == 37){
+			setaTras = true;      
+		}
+	} 
+	window.addEventListener('keyup', teclaOff);
+	function teclaOff(e) {    
+		if (e.keyCode == 39){
+			setaFrente = false; 
+		} else if (e.keyCode == 37){
+			setaTras = false;      
+		}
+	}	
+	
+//imagem
+	var p1Spr = new Image();
+	p1Spr.src = "sonic.png"; 
+
+	p1Spr.spritelargura = 416;
+	p1Spr.spritealtura = 156;
+	p1Spr.numLinhas = 3;       
+	p1Spr.numColunas = 8;  
+	p1Spr.largura =  p1Spr.spritelargura/p1Spr.numColunas;
+	p1Spr.altura = p1Spr.spritealtura/p1Spr.numLinhas;
+
+	p1Spr.linha = 0;       
+	p1Spr.coluna = 0; 
+	p1Spr.intervalo = 300; 
+	
+	p1Spr.srcX;
+	p1Spr.srcY;
+
+//p1
+	p1 = {
+		x : 200, 
+		y : 200, 
+		largura : 50,
+		altura : 50,
+		velocidade : 5
+	}	
+	antes = new Date().getTime();
+	function tempo() {  
+		
+		agora = new Date().getTime();
+		decorrido = agora - antes;
+
+		if(decorrido > p1Spr.intervalo){
+			console.log(decorrido)
+			if (p1Spr.coluna < p1Spr.numColunas - 1)       
+			p1Spr.coluna+=2;       
+			else         
+			p1Spr.coluna = 0;			 
+			p1Spr.coluna+=1; 
+			antes = new Date().getTime();
+		}			                       		
+    }
+   function atualiza() { 	
+		if(!setaFrente && !setaTras){
+			ctx.clearRect(p1.x,p1.y,p1Spr.largura,p1Spr.altura);			
+			p1Spr.srcY = 0;	
+			p1Spr.srcX = 0;					
+		}
+        if (setaFrente) {
+			tempo();
+			ctx.clearRect(p1.x,p1.y,p1Spr.largura,p1Spr.altura);  
+			p1Spr.srcY = 1 * p1Spr.altura;  			
+			p1Spr.srcX = p1Spr.largura *  p1Spr.coluna; 
+			p1.x+=p1.velocidade;
+        } 
+		if (setaTras) {
+			tempo();
+			ctx.clearRect(p1.x,p1.y,p1Spr.largura,p1Spr.altura); 
+			p1Spr.srcY = 2 * p1Spr.altura;  			
+			p1Spr.srcX = p1Spr.largura *  p1Spr.coluna; 
+			p1.x-=p1.velocidade;  
+		}       
+	}
+	function desenha(){		
+		ctx.drawImage(
+			p1Spr,
+			p1Spr.srcX, p1Spr.srcY, p1Spr.largura,	p1Spr.altura,
+			p1.x, 		p1.y, 		p1.largura,		p1.altura
+		);
+	}
+requestAnimationFrame(loop)
+	function loop(){
+		tempo();		
+		atualiza();
+		desenha();
+		requestAnimationFrame(loop)
+	}
+	//setInterval(loop,100);
+	
+	</script>
+
+	</body>
+</html>
