@@ -1,0 +1,89 @@
+gerar_executavel de jogos e programas
+
+1. Instale o Node.js
+Baixe:
+Node.js Oficial
+
+Depois confirme:
+node -v
+npm -v
+
+2. Abra a pasta do jogo no terminal
+Exemplo:
+cd C:\Projetos\theStreet
+
+3. Inicialize o projeto Electron
+Execute:
+npm init -y
+Isso cria o package.json.
+
+4. Instale Electron
+npm install electron --save-dev
+
+5. Instale o criador do executável
+npm install electron-builder --save-dev
+
+6. Crie o arquivo main.js
+Na raiz do projeto:
+
+const { app, BrowserWindow } = require('electron');
+
+function createWindow() {
+
+    const win = new BrowserWindow({
+        width: 1280,
+        height: 720,
+        fullscreen: false,
+        autoHideMenuBar: true
+    });
+
+    win.loadFile('index.html');
+}
+
+app.whenReady().then(createWindow);
+
+
+7. Modifique o package.json
+Troque o conteúdo por algo assim:
+
+{
+  "name": "thestreet",
+  "version": "1.0.0",
+  "description": "Ping Pong Game",
+  "main": "main.js",
+
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+
+  "build": {
+    "appId": "com.thestreet.game",
+    "productName": "TheStreet",
+    "win": {
+      "target": "nsis",
+      "icon": "icon.ico"
+    }
+  },
+
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3"
+  }
+}
+
+8. Teste o jogo
+Execute:
+npm start
+Se abrir uma janela desktop:
+✅ está funcionando.
+
+9. Gere o .exe
+Agora execute:
+npm run build
+O Electron Builder criará:
+dist/
+Dentro haverá:
+TheStreet Setup.exe
+ou:
+TheStreet.exe
